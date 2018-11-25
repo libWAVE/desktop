@@ -30,7 +30,7 @@
 
 		<Logger
 			name="org.springframework"
-			level="info"
+			level="debug"
 			additivity="false"
 		>
 			<AppenderRef ref="console" />
