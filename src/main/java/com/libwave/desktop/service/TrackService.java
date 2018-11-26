@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -29,6 +28,11 @@ public class TrackService {
 	private AudioFileTagReaderService audioInfoService;
 
 	@Transactional
+	public long count() {
+		return trackDao.count();
+	}
+
+	@Transactional
 	public void add(File fileOrFolder) {
 
 		log.debug("Adding: " + fileOrFolder);
@@ -43,13 +47,30 @@ public class TrackService {
 
 	private void addFolder(File folder) {
 
-		
-		
+		File[] files = folder.listFiles();
+
+		for (File file : files) {
+			addFile(file);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+
+	}
+
+	private boolean isAudioFile(File file) {
+		return file.canRead() && file.getAbsolutePath().toLowerCase().endsWith("mp3");
 	}
 
 	private void addFile(File file) {
 
 		log.debug("Add file: " + file);
+
+		if (false == isAudioFile(file)) {
+			log.warn("Can't read: " + file);
+			return;
+		}
 
 		Track t = new Track();
 		t.setFileName(file.getName());
@@ -63,8 +84,11 @@ public class TrackService {
 		} catch (Exception e) {
 			log.error("Error: ", e);
 		}
-		
-		trackDao.save(t);
+
+		if (trackDao.findByUuid(t.getUuid()) == null) {
+			trackDao.save(t);
+			log.debug("Saved track: " + t);
+		}
 
 	}
 }

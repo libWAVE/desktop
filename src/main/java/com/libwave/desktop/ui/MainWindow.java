@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import com.libwave.desktop.DesktopClient;
 import com.libwave.desktop.service.AddTracksFolderService;
+import com.libwave.desktop.service.TrackService;
 
 @Component
 public class MainWindow implements InitializingBean, ActionListener {
@@ -32,21 +33,24 @@ public class MainWindow implements InitializingBean, ActionListener {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private JFrame frame;
-	
-	@Autowired()
+
+	@Autowired
+	private TrackService trackService;
+
+	@Autowired
 	private AddTracksFolderService addTracksFolderService;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		frame = new JFrame("libWAVE");
+		frame = new JFrame("libWAVE (" + trackService.count() + " tracks)");
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
 			public void windowClosing(WindowEvent arg0) {
 				DesktopClient.close();
 			}
-			
+
 		});
 		frame.setLayout(new BorderLayout());
 		frame.setIconImage(new ImageIcon(this.getClass().getResource("/images/logo.png")).getImage());
@@ -54,10 +58,9 @@ public class MainWindow implements InitializingBean, ActionListener {
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setSize(600, 800);
 		frame.setLocationRelativeTo(null);
-		
-		
+
 		setupMenu();
-		
+
 		frame.setVisible(true);
 
 	}
@@ -67,30 +70,29 @@ public class MainWindow implements InitializingBean, ActionListener {
 		JMenuBar mb = new JMenuBar();
 		{
 			JMenu menu = new JMenu("Tracks");
-			
+
 			JMenuItem addFolder = new JMenuItem("Add a folder");
 			addFolder.setMnemonic('F');
 			addFolder.setActionCommand(ADD_FOLDER);
 			addFolder.addActionListener(this);
-			addFolder.setAccelerator(KeyStroke.getKeyStroke(
-			        KeyEvent.VK_F, ActionEvent.CTRL_MASK));
+			addFolder.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
 			menu.add(addFolder);
-			
+
 			mb.add(menu);
-			
+
 		}
-		
+
 		frame.setJMenuBar(mb);
-		
+
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+
 		if (ADD_FOLDER.equals(e.getActionCommand())) {
 			addTracksFolderService.add(frame);
 		}
-		
+
 	}
 
 }

@@ -20,7 +20,7 @@ public class Track {
 	@Column(name = "PATH", nullable = false, length = 4096, unique = true)
 	private String path;
 
-	@Column(name = "UUID", nullable = false, length = 20, unique = true)
+	@Column(name = "UUID", nullable = false, length = 32, unique = true)
 	private String uuid;
 
 	@Column(name = "FILENAME", nullable = false, length = 1024)
