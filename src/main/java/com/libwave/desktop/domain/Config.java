@@ -19,7 +19,7 @@ public class Config {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name = "UUID", nullable = false, length = 32)
+	@Column(name = "UUID", nullable = false)
 	private String uuid;
 
 	@Column(name = "DATE", nullable = false)

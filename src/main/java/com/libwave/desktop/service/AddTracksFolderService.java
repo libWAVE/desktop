@@ -31,7 +31,9 @@ public class AddTracksFolderService implements InitializingBean {
 		if (chooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
 			log.debug("getCurrentDirectory(): " + chooser.getCurrentDirectory());
 			log.debug("getSelectedFile() : " + chooser.getSelectedFile());
+			
 			trackService.add(chooser.getSelectedFile());
+			
 		} else {
 			log.debug("No Selection ");
 		}

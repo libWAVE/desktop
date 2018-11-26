@@ -38,12 +38,16 @@ public class MainWindow implements InitializingBean, ActionListener {
 	private TrackService trackService;
 
 	@Autowired
+	private StatusBar statusBar;
+
+	@Autowired
 	private AddTracksFolderService addTracksFolderService;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		frame = new JFrame("libWAVE (" + trackService.count() + " tracks)");
+		frame = new JFrame();
+
 		frame.addWindowListener(new WindowAdapter() {
 
 			@Override
@@ -59,10 +63,18 @@ public class MainWindow implements InitializingBean, ActionListener {
 		frame.setSize(600, 800);
 		frame.setLocationRelativeTo(null);
 
+		frame.add(statusBar, BorderLayout.PAGE_END);
+
+		updateTitle();
+		
 		setupMenu();
 
 		frame.setVisible(true);
 
+	}
+
+	public void updateTitle() {
+		frame.setTitle("libWAVE (" + trackService.count() + " tracks)");
 	}
 
 	private void setupMenu() {

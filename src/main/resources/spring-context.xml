@@ -21,13 +21,15 @@
 		ignore-resource-not-found="false" ignore-unresolvable="true"
 		location="classpath:/db.properties" />
 
-
-
 	<context:component-scan base-package="com.libwave.desktop" />
 
 	<context:annotation-config />
 
-	<task:annotation-driven />
+	<task:executor id="defaultExecutor" pool-size="4" />
+	<task:scheduler id="defaultScheduler" pool-size="4" />
+
+	<task:annotation-driven executor="defaultExecutor"
+		scheduler="defaultScheduler" />
 
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
 		destroy-method="close">
@@ -40,9 +42,9 @@
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		
+
 		<property name="persistenceUnitName" value="com.libwave.jpa" />
-		
+
 		<property name="dataSource" ref="dataSource" />
 
 		<property name="jpaVendorAdapter">
@@ -56,7 +58,7 @@
 			<props>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
-				<prop key="hibernate.generate_statistics">true</prop>
+				<prop key="hibernate.generate_statistics">false</prop>
 				<prop key="hibernate.use_sql_comments">true</prop>
 				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
 				<prop key="hibernate.connection.isolation">1</prop>
@@ -69,12 +71,10 @@
 	</bean>
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
-	
-	<jpa:repositories 
-		entity-manager-factory-ref="entityManagerFactory"
-		transaction-manager-ref="transactionManager" 
-		base-package="com.libwave.desktop.dao" />
 
-	<bean id="restTemplate" class= "org.springframework.web.client.RestTemplate" />
+	<jpa:repositories entity-manager-factory-ref="entityManagerFactory"
+		transaction-manager-ref="transactionManager" base-package="com.libwave.desktop.dao" />
+
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
 
 </beans>
