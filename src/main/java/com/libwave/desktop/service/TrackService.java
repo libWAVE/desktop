@@ -4,7 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.SwingUtilities;
@@ -22,6 +25,7 @@ import com.libwave.desktop.dao.TrackDao;
 import com.libwave.desktop.domain.Track;
 import com.libwave.desktop.ui.MainWindow;
 import com.libwave.desktop.ui.StatusBar;
+import com.libwave.desktop.ui.TrackListPanel;
 
 @Service
 public class TrackService {
@@ -36,9 +40,12 @@ public class TrackService {
 
 	@Autowired
 	private StatusBar statusBar;
-	
+
 	@Autowired
 	private MainWindow mainWindow;
+
+	@Autowired
+	private TrackListPanel trackListPanel;
 
 	private Queue<File> queue = new LinkedBlockingQueue<>();
 
@@ -53,9 +60,9 @@ public class TrackService {
 
 	@Transactional
 	@Scheduled(fixedDelay = 50)
-	public void process() throws InterruptedException {
+	public void process() {
 
-		log.debug("Process tracks");
+		// log.debug("Process tracks");
 
 		File fileOrFolder = queue.poll();
 
@@ -70,11 +77,16 @@ public class TrackService {
 			}
 
 			statusBar.setStatus("Ready");
-			
+
 			mainWindow.updateTitle();
 
+			trackListPanel.updateTracks();
+
 		} else {
-			Thread.sleep(1000);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
 		}
 
 	}
@@ -100,8 +112,26 @@ public class TrackService {
 
 	}
 
+	private Set<String> audioExtensions = new HashSet<>();
+	{
+		audioExtensions.add("wav");
+		audioExtensions.add("aiff");
+		audioExtensions.add("voc");
+		audioExtensions.add("mod");
+		audioExtensions.add("xm");
+		audioExtensions.add("s3m");
+		audioExtensions.add("669");
+		audioExtensions.add("it");
+		audioExtensions.add("med");
+		audioExtensions.add("mid");
+		audioExtensions.add("ogg");
+		audioExtensions.add("mp3");
+		audioExtensions.add("flac");
+	}
+
 	private boolean isAudioFile(File file) {
-		return file.canRead() && file.getAbsolutePath().toLowerCase().endsWith("mp3");
+		return file.canRead()
+				&& audioExtensions.contains(FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase());
 	}
 
 	private void addFile(File file) {
@@ -151,13 +181,18 @@ public class TrackService {
 		statusBar.setStatus("Deleting all tracks...");
 		mainWindow.updateTitle();
 		statusBar.setStatus("Ready");
-		
+		trackListPanel.updateTracks();
 	}
 
 	public void add(File[] selectedFiles) {
-		for (File f:selectedFiles) {
+		for (File f : selectedFiles) {
 			add(f);
 		}
 	}
-	
+
+	@Transactional
+	public Iterable<Track> findAll() {
+		return trackDao.findAll();
+	}
+
 }

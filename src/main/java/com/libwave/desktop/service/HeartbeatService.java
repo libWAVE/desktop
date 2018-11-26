@@ -32,11 +32,11 @@ public class HeartbeatService {
 
 		String url = host + BackendUrls.HEARTBEAT;
 		url = StringUtils.replace(url, "{uuid}", configService.getUuid());
-
+/*
 		log.debug("Heartbeat: " + url);
 		
 		restTemplate.getForObject(url, HeartbeatResponse.class);
-
+*/
 	}
 
 }

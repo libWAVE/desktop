@@ -51,6 +51,9 @@ public class MainWindow implements InitializingBean, ActionListener {
 	private StatusBar statusBar;
 
 	@Autowired
+	private TrackListPanel trackListPanel;
+	
+	@Autowired
 	private AddTracksFolderService addTracksFolderService;
 
 	@Autowired
@@ -76,6 +79,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 		frame.setSize(600, 800);
 		frame.setLocationRelativeTo(null);
 
+		frame.add(trackListPanel, BorderLayout.CENTER);
 		frame.add(statusBar, BorderLayout.PAGE_END);
 
 		updateTitle();

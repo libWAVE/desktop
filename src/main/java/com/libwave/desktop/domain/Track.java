@@ -104,8 +104,7 @@ public class Track {
 
 	@Override
 	public String toString() {
-		return "Track [id=" + id + ", path=" + path + ", uuid=" + uuid + ", fileName=" + fileName + ", title=" + title
-				+ ", artist=" + artist + ", album=" + album + ", genre=" + genre + "]";
+		return path;
 	}
 
 }

@@ -20,7 +20,7 @@ public class Fonts {
 		} catch (IOException e) {
 			log.error("Error: ", e);
 		}
-		font = font.deriveFont(19.0f);
+		font = font.deriveFont(16.0f);
 		return font;
 	}
 
