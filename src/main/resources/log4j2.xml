@@ -30,7 +30,7 @@
 
 		<Logger
 			name="org.springframework"
-			level="debug"
+			level="warn"
 			additivity="false"
 		>
 			<AppenderRef ref="console" />
@@ -48,7 +48,7 @@
 		</Logger>
 
 		<Root
-			level="info"
+			level="warn"
 			additivity="false"
 		>
 			<AppenderRef ref="console" />

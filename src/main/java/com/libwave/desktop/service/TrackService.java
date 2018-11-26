@@ -52,7 +52,7 @@ public class TrackService {
 	}
 
 	@Transactional
-	@Scheduled(fixedDelay = 1000)
+	@Scheduled(fixedDelay = 50)
 	public void process() throws InterruptedException {
 
 		log.debug("Process tracks");
@@ -144,4 +144,20 @@ public class TrackService {
 		}
 
 	}
+
+	@Transactional
+	public void removeAll() {
+		trackDao.deleteAll();
+		statusBar.setStatus("Deleting all tracks...");
+		mainWindow.updateTitle();
+		statusBar.setStatus("Ready");
+		
+	}
+
+	public void add(File[] selectedFiles) {
+		for (File f:selectedFiles) {
+			add(f);
+		}
+	}
+	
 }
