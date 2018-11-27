@@ -1,9 +1,13 @@
 package com.libwave.desktop.service;
 
+import java.awt.Dimension;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,6 +33,11 @@ public class ConfigService implements InitializingBean {
 		return getConfig().get().getUuid();
 	}
 
+	@Transactional
+	public void save(Config config) {
+		this.configDao.save(config);
+	}
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (configDao.count() == 0) {
@@ -36,6 +45,8 @@ public class ConfigService implements InitializingBean {
 			c.setId(1);
 			c.setDate(new Date());
 			c.setUuid(UUID.randomUUID().toString());
+			c.setFileChooserSize(new Dimension(800, 600));
+			c.setFileChooserLocation(SystemUtils.getUserHome().getAbsolutePath());
 			configDao.save(c);
 		}
 	}

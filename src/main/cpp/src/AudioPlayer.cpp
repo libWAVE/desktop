@@ -5,7 +5,23 @@
 
 #include "AudioPlayer_jni.h"
 
-JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_init(JNIEnv *, jobject) {
+JNIEnv *env = nullptr;
+
+void effectCallback(int chan, void *stream, int len, void *udata) {
+
+	std::cout << std::to_string(len) << std::endl;
+
+	auto callback_class = env->FindClass("AudioPlayer");
+
+    auto callback_method = env->GetStaticMethodID(callback_class, "musicDataStream", "(II)I");
+
+
+
+}
+
+JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_init(JNIEnv *e, jobject) {
+
+	env = e;
 
 	if (SDL_Init( SDL_INIT_EVERYTHING) < 0) {
 		std::cerr << "There was an error initializing SDL2: " << SDL_GetError() << std::endl;
@@ -25,6 +41,10 @@ JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_init(JNIEnv 
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
 		std::cerr << "Mix_OpenAudio: " << Mix_GetError() << std::endl;
 		std::terminate();
+	}
+
+	if (!Mix_RegisterEffect(MIX_CHANNEL_POST, effectCallback, nullptr, nullptr)) {
+		std::cerr << "Mix_RegisterEffect: " << Mix_GetError() << std::endl;
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.libwave.desktop.domain;
 
+import java.awt.Dimension;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -24,6 +25,31 @@ public class Config {
 
 	@Column(name = "DATE", nullable = false)
 	private Date date;
+
+	@Column(name = "FILE_CHOOSER_SIZE", nullable = true)
+	private String fileChooserSize;
+
+	@Column(name = "FILE_CHOOSER_LOCATION", nullable = true, length = 4096)
+	private String fileChooserLocation;
+
+	public Dimension getFileChooserSize() {
+		String w = fileChooserSize.split("x")[0];
+		String h = fileChooserSize.split("x")[1];
+
+		return new Dimension(Integer.parseInt(w), Integer.parseInt(h));
+	}
+
+	public String getFileChooserLocation() {
+		return fileChooserLocation;
+	}
+
+	public void setFileChooserLocation(String fileChooserLocation) {
+		this.fileChooserLocation = fileChooserLocation;
+	}
+
+	public void setFileChooserSize(Dimension size) {
+		this.fileChooserSize = (int) size.getWidth() + "x" + (int) size.getHeight();
+	}
 
 	public int getId() {
 		return id;

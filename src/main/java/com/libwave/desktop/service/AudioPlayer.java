@@ -1,10 +1,26 @@
 package com.libwave.desktop.service;
 
+import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AudioPlayer {
 
+	private static final Logger log = LoggerFactory.getLogger(AudioPlayer.class);
+
 	static {
-		System.loadLibrary("libAudioPlayer");
+		try {
+			System.loadLibrary("libAudioPlayer");
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Cannot load AudioPlayer library");
+		}
 	}
+	/*
+	public static void audioDataCallback(int chan, void *stream, int len, void *udata) {
+		
+	}
+	*/
 
 	public native void init();
 

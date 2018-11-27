@@ -99,6 +99,10 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 
 	}
 
+	public void addTrack(Track t) {
+		tableModel.addRow(new Track[] { t });
+	}
+	
 	public void updateTracks() {
 
 		if (tableModel.getRowCount() > 0) {

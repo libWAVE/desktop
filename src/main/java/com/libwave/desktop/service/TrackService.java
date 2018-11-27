@@ -80,8 +80,6 @@ public class TrackService {
 
 			mainWindow.updateTitle();
 
-			trackListPanel.updateTracks();
-
 		} else {
 			try {
 				Thread.sleep(1000);
@@ -129,6 +127,10 @@ public class TrackService {
 		audioExtensions.add("flac");
 	}
 
+	public Set<String> getAudioExtensions() {
+		return audioExtensions;
+	}
+
 	private boolean isAudioFile(File file) {
 		return file.canRead()
 				&& audioExtensions.contains(FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase());
@@ -171,6 +173,9 @@ public class TrackService {
 
 			trackDao.save(t);
 			log.debug("Saved track: " + t);
+
+			trackListPanel.addTrack(t);
+
 		}
 
 	}
