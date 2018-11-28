@@ -75,8 +75,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 		});
 		frame.setLayout(new BorderLayout());
 
-		 frame.setIconImages(Icons.getAppIcons());
-		frame.setIconImage(MainWindowIcon.getIcon());
+		frame.setIconImages(Icons.getAppIcons());
 
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setSize(600, 800);
@@ -104,20 +103,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 		{
 			JMenu menu = new JMenu("File");
 			mb.add(menu);
-
-			JMenuItem exit = new JMenuItem("Exit");
-			exit.setMnemonic('x');
-			exit.setActionCommand(EXIT);
-			exit.addActionListener(this);
-			exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
-			menu.add(exit);
-
-		}
-
-		{
-			JMenu menu = new JMenu("Tracks");
-			mb.add(menu);
-
+			
 			JMenuItem addFile = new JMenuItem("Add files");
 			addFile.setMnemonic('A');
 			addFile.setActionCommand(ADD_FILE);
@@ -134,11 +120,61 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 			menu.addSeparator();
 
-			JMenuItem removeTracks = new JMenuItem("Remove all");
+			JMenuItem removeTracks = new JMenuItem("Remove all tracks");
 			removeTracks.setActionCommand(REMOVE_ALL);
 			removeTracks.addActionListener(this);
 			menu.add(removeTracks);
+			
+			menu.addSeparator();
 
+			JMenuItem exit = new JMenuItem("Exit");
+			exit.setMnemonic('x');
+			exit.setActionCommand(EXIT);
+			exit.addActionListener(this);
+			exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+			menu.add(exit);
+
+		}
+
+
+		{
+
+			JMenu menu = new JMenu("Player");
+			mb.add(menu);
+
+			{
+				JMenuItem item = new JMenuItem("Play",Icons.getIcon("play_24.png"));
+				item.setMnemonic('P');
+				
+				item.setActionCommand("PLAY");
+				item.addActionListener(this);
+				menu.add(item);
+			}
+			menu.addSeparator();
+			{
+				JMenuItem item = new JMenuItem("Pause",Icons.getIcon("pause_24.png"));
+				item.setMnemonic('A');
+				item.setActionCommand("PAUSE");
+				item.addActionListener(this);
+				menu.add(item);
+			}
+			/*
+			{
+				JMenuItem item = new JMenuItem("Resume");
+				item.setMnemonic('R');
+				item.setActionCommand("RESUME");
+				item.addActionListener(this);
+				menu.add(item);
+			}
+			 */			
+			menu.addSeparator();
+			{
+				JMenuItem item = new JMenuItem("Stop",Icons.getIcon("stop_24.png"));
+				item.setMnemonic('S');
+				item.setActionCommand("STOP");
+				item.addActionListener(this);
+				menu.add(item);
+			}
 		}
 
 		frame.setJMenuBar(mb);
@@ -164,7 +200,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 	public static void setIcon(BufferedImage bim) {
 		if (frame != null && bim != null) {
-//			System.out.println("Updated icon");
+			// System.out.println("Updated icon");
 			frame.setIconImage(bim);
 		}
 	}

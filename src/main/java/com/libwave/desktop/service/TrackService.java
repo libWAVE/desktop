@@ -5,10 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.SwingUtilities;
 import javax.transaction.Transactional;
@@ -21,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.libwave.desktop.dao.FileToIndexDao;
 import com.libwave.desktop.dao.TrackDao;
+import com.libwave.desktop.domain.FileToIndex;
 import com.libwave.desktop.domain.Track;
 import com.libwave.desktop.ui.MainWindow;
 import com.libwave.desktop.ui.StatusBar;
@@ -47,15 +46,17 @@ public class TrackService {
 	@Autowired
 	private TrackListPanel trackListPanel;
 
-	private Queue<File> queue = new LinkedBlockingQueue<>();
+	@Autowired
+	private FileToIndexDao fileToIndexDao;
 
 	@Transactional
 	public long count() {
 		return trackDao.count();
 	}
 
+	@Transactional
 	public void add(File fileOrFolder) {
-		queue.add(fileOrFolder);
+		fileToIndexDao.save(new FileToIndex(fileOrFolder.getAbsolutePath()));
 	}
 
 	@Transactional
@@ -64,9 +65,13 @@ public class TrackService {
 
 		// log.debug("Process tracks");
 
-		File fileOrFolder = queue.poll();
+		Iterable<FileToIndex> fileToIndex = this.fileToIndexDao.findAll();
 
-		if (fileOrFolder != null) {
+		for (FileToIndex fti : fileToIndex) {
+
+			File fileOrFolder = new File(fti.getPath());
+
+			log.debug("Add: " + fileOrFolder.getAbsolutePath());
 
 			log.debug("Adding: " + fileOrFolder);
 
@@ -80,11 +85,13 @@ public class TrackService {
 
 			mainWindow.updateTitle();
 
-		} else {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(25);
 			} catch (InterruptedException e) {
 			}
+			
+			fileToIndexDao.delete(fti);
+
 		}
 
 	}

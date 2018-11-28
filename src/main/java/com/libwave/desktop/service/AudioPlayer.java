@@ -24,11 +24,11 @@ public class AudioPlayer {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Cannot load AudioPlayer library");
 		}
-		
+
 		new Thread(() -> {
 			while (true) {
 				Integer[] poll = queue.poll();
-				if (poll!=null) {
+				if (poll != null) {
 					MainWindowIcon.draw(poll);
 				}
 				try {
@@ -37,7 +37,7 @@ public class AudioPlayer {
 				}
 			}
 
-		}).start();		
+		}).start();
 	}
 
 	public static void audioDataCallback() {
@@ -70,26 +70,26 @@ public class AudioPlayer {
 	public native void playMusic(long song);
 
 	public native void playMusicFadeIn(long song, int ms);
-/*
-	public static void main(String[] args) throws InterruptedException {
+	/*
+	 * public static void main(String[] args) throws InterruptedException {
+	 * 
+	 * AudioPlayer ap = new AudioPlayer();
+	 * 
+	 * ap.init();
+	 * 
+	 * long loadMusic = ap.loadMusic("c:/downloads/2ND_PM.S3M");
+	 * 
+	 * ap.playMusicFadeIn(loadMusic, 2000);
+	 * 
+	 * Thread.sleep(30000);
+	 * 
+	 * ap.stopFadeOut(400);
+	 * 
+	 * Thread.sleep(2000);
+	 * 
+	 * ap.shutdown();
+	 * 
+	 * }
+	 */
 
-		AudioPlayer ap = new AudioPlayer();
-
-		ap.init();
-
-		long loadMusic = ap.loadMusic("c:/downloads/2ND_PM.S3M");
-
-		ap.playMusicFadeIn(loadMusic, 2000);
-
-		Thread.sleep(30000);
-
-		ap.stopFadeOut(400);
-
-		Thread.sleep(2000);
-
-		ap.shutdown();
-
-	}
-*/
-	
 }
