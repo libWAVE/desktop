@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -42,7 +43,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	private JFrame frame;
+	private static JFrame frame;
 
 	@Autowired
 	private TrackService trackService;
@@ -52,7 +53,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 	@Autowired
 	private TrackListPanel trackListPanel;
-	
+
 	@Autowired
 	private AddTracksFolderService addTracksFolderService;
 
@@ -73,7 +74,9 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 		});
 		frame.setLayout(new BorderLayout());
-		frame.setIconImages(Icons.getAppIcons());
+
+		 frame.setIconImages(Icons.getAppIcons());
+		frame.setIconImage(MainWindowIcon.getIcon());
 
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setSize(600, 800);
@@ -157,6 +160,13 @@ public class MainWindow implements InitializingBean, ActionListener {
 			DesktopClient.close();
 		}
 
+	}
+
+	public static void setIcon(BufferedImage bim) {
+		if (frame != null && bim != null) {
+//			System.out.println("Updated icon");
+			frame.setIconImage(bim);
+		}
 	}
 
 }

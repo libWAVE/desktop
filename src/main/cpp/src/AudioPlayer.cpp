@@ -5,30 +5,83 @@
 
 #include "AudioPlayer_jni.h"
 
-JNIEnv *env = nullptr;
+JavaVM * jvm = nullptr;
+
+jint jvm_version;
+jclass callback_class;
+jmethodID callback_method;
 
 void effectCallback(int chan, void *stream, int len, void *udata) {
 
-	std::cout << std::to_string(len) << std::endl;
+	JNIEnv * g_env;
+	// double check it's all ok
+	int getEnvStat = jvm->GetEnv((void **) &g_env, jvm_version);
 
-	auto callback_class = env->FindClass("AudioPlayer");
+	if (getEnvStat == JNI_EDETACHED) {
 
-    auto callback_method = env->GetStaticMethodID(callback_class, "musicDataStream", "(II)I");
+		if (jvm->AttachCurrentThread((void **) &g_env, nullptr) != 0) {
+			std::cerr << "Failed to attach" << std::endl;
+		}
 
+	} else if (getEnvStat == JNI_OK) {
 
+	} else if (getEnvStat == JNI_EVERSION) {
+
+		std::cerr << "GetEnv: version not supported" << std::endl;
+
+	}
+
+	// g_env->CallStaticVoidMethod(callback_class, callback_method);
+
+	jintArray buffer = g_env->NewIntArray(len/2);
+
+	int* newBuffer = new int[len/2];
+
+	for (int i=0; i<len/2;i+=2) {
+		newBuffer[i] = ( ((int *)stream)[i] + ((int *)stream)[i+1])/2;
+	}
+
+	g_env->SetIntArrayRegion(buffer, 0, len/2, (jint*)newBuffer);
+
+	g_env->CallIntMethod(callback_class, callback_method, buffer);
+
+	jvm->DetachCurrentThread();
+
+	delete[] newBuffer;
+
+	/*
+	 std::cout << std::to_string((unsigned long long)callback_method) << std::endl;
+
+	 */
 
 }
 
-JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_init(JNIEnv *e, jobject) {
+JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_init(JNIEnv *env, jobject) {
 
-	env = e;
+	env->GetJavaVM(&jvm);
+	jvm_version = env->GetVersion();
+
+	callback_class = env->FindClass("com/libwave/desktop/service/AudioPlayer");
+
+	if (!callback_class) {
+		std::cerr << "callback_class not found" << std::endl;
+		std::terminate();
+	}
+
+	std::cout << std::to_string((unsigned long long) callback_class) << std::endl;
+
+	callback_method = env->GetStaticMethodID(callback_class, "audioDataCallback", "([I)V");
+
+	if (!callback_method) {
+		std::cerr << "callback_method not found" << std::endl;
+		std::terminate();
+	}
 
 	if (SDL_Init( SDL_INIT_EVERYTHING) < 0) {
 		std::cerr << "There was an error initializing SDL2: " << SDL_GetError() << std::endl;
 		std::terminate();
 	}
 
-	// load support for the OGG and MOD sample/music formats
 	auto flags = MIX_INIT_OGG | MIX_INIT_MOD | MIX_INIT_FLAC | MIX_INIT_MP3;
 
 	auto initted = Mix_Init(flags);
@@ -49,11 +102,6 @@ JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_init(JNIEnv 
 
 }
 
-/*
- * Class:     com_libwave_desktop_service_AudioPlayer
- * Method:    shutdown
- * Signature: ()V
- */
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_shutdown(JNIEnv *, jobject) {
 
 	Mix_CloseAudio();
@@ -64,20 +112,11 @@ JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_shutdown(JNI
 
 }
 
-/*
- * Class:     com_libwave_desktop_service_AudioPlayer
- * Method:    resume
- * Signature: ()V
- */
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_resume(JNIEnv *, jobject) {
 
+	Mix_ResumeMusic();
 }
 
-/*
- * Class:     com_libwave_desktop_service_AudioPlayer
- * Method:    stop
- * Signature: ()V
- */
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_stop(JNIEnv *, jobject) {
 
 	Mix_HaltMusic();
@@ -85,29 +124,18 @@ JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_stop(JNIEnv 
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_stopFadeOut(JNIEnv *, jobject, jint ms) {
 
-	// fade out music to finish 3 seconds from now
 	while (!Mix_FadeOutMusic(ms) && Mix_PlayingMusic()) {
 		SDL_Delay(100);
 	}
 
 }
 
-/*
- * Class:     com_libwave_desktop_service_AudioPlayer
- * Method:    pause
- * Signature: ()V
- */
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_pause(JNIEnv *, jobject) {
 
 	Mix_PauseMusic();
 
 }
 
-/*
- * Class:     com_libwave_desktop_service_AudioPlayer
- * Method:    loadMusic
- * Signature: (Ljava/lang/String;)J
- */
 JNIEXPORT jlong JNICALL Java_com_libwave_desktop_service_AudioPlayer_loadMusic(JNIEnv *env, jobject, jstring file) {
 
 	char buf[4096];
@@ -126,25 +154,18 @@ JNIEXPORT jlong JNICALL Java_com_libwave_desktop_service_AudioPlayer_loadMusic(J
 	return (unsigned long long) music;
 }
 
-/*
- * Class:     com_libwave_desktop_service_AudioPlayer
- * Method:    playMusic
- * Signature: (J)V
- */
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_playMusic(JNIEnv *env, jobject, jlong id) {
 
-	Mix_PlayMusic((Mix_Music*) id, 1);
+	if (Mix_PlayMusic((Mix_Music*) id, 0) == -1) {
+		std::cerr << "Mix_PlayMusic: " << Mix_GetError() << std::endl;
+	}
 
 }
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_playMusicFadeIn(JNIEnv *, jobject, jlong music, jint ms) {
-
 	Mix_FadeInMusic((Mix_Music*) music, -1, ms);
-
 }
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_closeMusic(JNIEnv *, jobject, jlong music) {
-
 	Mix_FreeMusic((Mix_Music*) music);
-
 }
