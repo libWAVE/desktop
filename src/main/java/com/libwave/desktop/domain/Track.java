@@ -1,11 +1,16 @@
 package com.libwave.desktop.domain;
 
+import java.io.File;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 @SuppressWarnings("serial")
 @Entity
@@ -104,7 +109,7 @@ public class Track {
 
 	@Override
 	public String toString() {
-		return path;
+		return path + " (" + FileUtils.byteCountToDisplaySize(new File(path).length()) + ")";
 	}
 
 }

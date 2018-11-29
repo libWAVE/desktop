@@ -15,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +104,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 		{
 			JMenu menu = new JMenu("File");
 			mb.add(menu);
-			
+
 			JMenuItem addFile = new JMenuItem("Add files");
 			addFile.setMnemonic('A');
 			addFile.setActionCommand(ADD_FILE);
@@ -124,7 +125,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 			removeTracks.setActionCommand(REMOVE_ALL);
 			removeTracks.addActionListener(this);
 			menu.add(removeTracks);
-			
+
 			menu.addSeparator();
 
 			JMenuItem exit = new JMenuItem("Exit");
@@ -136,40 +137,35 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 		}
 
-
 		{
 
 			JMenu menu = new JMenu("Player");
 			mb.add(menu);
 
 			{
-				JMenuItem item = new JMenuItem("Play",Icons.getIcon("play_24.png"));
+				JMenuItem item = new JMenuItem("Play", Icons.getIcon("play_24.png"));
 				item.setMnemonic('P');
-				
+
 				item.setActionCommand("PLAY");
 				item.addActionListener(this);
 				menu.add(item);
 			}
 			menu.addSeparator();
 			{
-				JMenuItem item = new JMenuItem("Pause",Icons.getIcon("pause_24.png"));
+				JMenuItem item = new JMenuItem("Pause", Icons.getIcon("pause_24.png"));
 				item.setMnemonic('A');
 				item.setActionCommand("PAUSE");
 				item.addActionListener(this);
 				menu.add(item);
 			}
 			/*
-			{
-				JMenuItem item = new JMenuItem("Resume");
-				item.setMnemonic('R');
-				item.setActionCommand("RESUME");
-				item.addActionListener(this);
-				menu.add(item);
-			}
-			 */			
+			 * { JMenuItem item = new JMenuItem("Resume"); item.setMnemonic('R');
+			 * item.setActionCommand("RESUME"); item.addActionListener(this);
+			 * menu.add(item); }
+			 */
 			menu.addSeparator();
 			{
-				JMenuItem item = new JMenuItem("Stop",Icons.getIcon("stop_24.png"));
+				JMenuItem item = new JMenuItem("Stop", Icons.getIcon("stop_24.png"));
 				item.setMnemonic('S');
 				item.setActionCommand("STOP");
 				item.addActionListener(this);
@@ -200,8 +196,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 	public static void setIcon(BufferedImage bim) {
 		if (frame != null && bim != null) {
-			// System.out.println("Updated icon");
-			frame.setIconImage(bim);
+			SwingUtilities.invokeLater(() -> frame.setIconImage(bim));
 		}
 	}
 

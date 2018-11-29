@@ -8,12 +8,16 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class StatusBar extends JPanel implements InitializingBean {
 
 	private JLabel status = new JLabel();
+
+	@Autowired
+	private PlayerPanel playerPanel;
 
 	public void setStatus(String msg) {
 		status.setText(msg);
@@ -27,6 +31,7 @@ public class StatusBar extends JPanel implements InitializingBean {
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		status.setText("Welcome to libWAVE!");
 		this.add(status, BorderLayout.WEST);
+		this.add(playerPanel, BorderLayout.EAST);
 
 	}
 
