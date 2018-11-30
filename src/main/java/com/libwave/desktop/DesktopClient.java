@@ -22,7 +22,7 @@ public class DesktopClient {
 
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
 
-		if (SystemUtils.IS_OS_WINDOWS_10 == false && SystemUtils.IS_OS_WINDOWS_2012 == false && SystemUtils.IS_OS_WINDOWS_8 == false) {
+		if (SystemUtils.IS_OS_WINDOWS == false) {
 			JDialog.setDefaultLookAndFeelDecorated(true);
 			JFrame.setDefaultLookAndFeelDecorated(true);
 		}

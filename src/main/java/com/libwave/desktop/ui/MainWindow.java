@@ -108,12 +108,14 @@ public class MainWindow implements InitializingBean, ActionListener {
 			JMenuItem addFile = new JMenuItem("Add files");
 			addFile.setMnemonic('A');
 			addFile.setActionCommand(ADD_FILE);
+			addFile.setIcon(Icons.getIcon("add.png"));
 			addFile.addActionListener(this);
 			addFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 			menu.add(addFile);
 
 			JMenuItem addFolder = new JMenuItem("Add a folder");
 			addFolder.setMnemonic('F');
+			addFolder.setIcon(Icons.getIcon("folder_add.png"));
 			addFolder.setActionCommand(ADD_FOLDER);
 			addFolder.addActionListener(this);
 			addFolder.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
@@ -123,6 +125,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 			JMenuItem removeTracks = new JMenuItem("Remove all tracks");
 			removeTracks.setActionCommand(REMOVE_ALL);
+			removeTracks.setIcon(Icons.getIcon("delete.png"));
 			removeTracks.addActionListener(this);
 			menu.add(removeTracks);
 
@@ -137,6 +140,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 		}
 
+		/*
 		{
 
 			JMenu menu = new JMenu("Player");
@@ -158,11 +162,11 @@ public class MainWindow implements InitializingBean, ActionListener {
 				item.addActionListener(this);
 				menu.add(item);
 			}
-			/*
-			 * { JMenuItem item = new JMenuItem("Resume"); item.setMnemonic('R');
-			 * item.setActionCommand("RESUME"); item.addActionListener(this);
-			 * menu.add(item); }
-			 */
+			
+			  { JMenuItem item = new JMenuItem("Resume"); item.setMnemonic('R');
+			  item.setActionCommand("RESUME"); item.addActionListener(this);
+			  menu.add(item); }
+			 
 			menu.addSeparator();
 			{
 				JMenuItem item = new JMenuItem("Stop", Icons.getIcon("stop_24.png"));
@@ -172,7 +176,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 				menu.add(item);
 			}
 		}
-
+*/
 		frame.setJMenuBar(mb);
 
 	}
@@ -196,7 +200,9 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 	public static void setIcon(BufferedImage bim) {
 		if (frame != null && bim != null) {
-			SwingUtilities.invokeLater(() -> frame.setIconImage(bim));
+			SwingUtilities.invokeLater(() -> {
+				frame.setIconImage(bim);
+			});
 		}
 	}
 

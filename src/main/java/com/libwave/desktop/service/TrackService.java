@@ -60,7 +60,7 @@ public class TrackService {
 	}
 
 	@Transactional
-	@Scheduled(fixedDelay = 50)
+	@Scheduled(fixedDelay = 2000)
 	public void process() {
 
 		// log.debug("Process tracks");

@@ -2,15 +2,16 @@
 package com.libwave.desktop.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ import com.libwave.desktop.service.TrackService;
 @Component
 public class TrackListPanel extends JPanel implements InitializingBean, DisposableBean {
 
+	private static final String PLAY_MUSIC = "PLAY_MUSIC";
+
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private JTable table;
@@ -42,7 +45,7 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		
+
 		ap.init();
 
 		tableModel = new DefaultTableModel(new String[] { "Filename" }, 0) {
@@ -55,6 +58,11 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 
 		table = new JTable(tableModel);
 
+		// 'Enter key' event
+		KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+		table.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, PLAY_MUSIC);
+		table.getActionMap().put(PLAY_MUSIC, new PlayTrackAction());
+
 		table.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -62,33 +70,11 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 
 				JTable table = (JTable) mouseEvent.getSource();
 
-				Point point = mouseEvent.getPoint();
-
-				int row = table.rowAtPoint(point);
-
 				if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
-
-					Track t = (Track) table.getValueAt(table.getSelectedRow(), 0);
-
-					if (t != null) {
-
-						log.debug("Play: " + t);
-
-						if (currentlyPlayedMusicPointer > 0) {
-							ap.stopFadeOut(400);
-							ap.closeMusic(currentlyPlayedMusicPointer);
-							currentlyPlayedMusicPointer = 0;
-						}
-
-						currentlyPlayedMusicPointer = ap.loadMusic(t.getPath());
-						
-						if (currentlyPlayedMusicPointer != 0) {
-							ap.playMusicFadeIn(currentlyPlayedMusicPointer, 1000);
-						}
-					}
-
+					play();
 				}
 			}
+
 		});
 
 		this.setLayout(new BorderLayout());
@@ -99,10 +85,34 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 
 	}
 
+	public void play() {
+		new PlayTrackAction().actionPerformed(null);
+	}
+
+	private void play(Track t) {
+
+		if (t != null) {
+
+			log.debug("Play: " + t);
+
+			if (currentlyPlayedMusicPointer > 0) {
+				ap.stopFadeOut(400);
+				ap.closeMusic(currentlyPlayedMusicPointer);
+				currentlyPlayedMusicPointer = 0;
+			}
+
+			currentlyPlayedMusicPointer = ap.loadMusic(t.getPath());
+
+			if (currentlyPlayedMusicPointer != 0) {
+				ap.playMusicFadeIn(currentlyPlayedMusicPointer, 1000);
+			}
+		}
+	}
+
 	public void addTrack(Track t) {
 		tableModel.addRow(new Track[] { t });
 	}
-	
+
 	public void updateTracks() {
 
 		if (tableModel.getRowCount() > 0) {
@@ -122,6 +132,22 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 	@Override
 	public void destroy() throws Exception {
 		ap.shutdown();
+	}
+
+	public Track getSelectedTrack() {
+		Track track = null;
+		if (table.getSelectedRow() >= 0) {
+			track = (Track) table.getValueAt(table.getSelectedRow(), 0);
+		}
+		return track;
+	}
+
+	private class PlayTrackAction extends 	AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			play(getSelectedTrack());
+		}
 	}
 
 }
