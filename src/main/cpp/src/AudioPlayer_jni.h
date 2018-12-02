@@ -87,6 +87,22 @@ JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_playMusic
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_playMusicFadeIn
   (JNIEnv *, jobject, jlong, jint);
 
+/*
+ * Class:     com_libwave_desktop_service_AudioPlayer
+ * Method:    isPlaying
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_libwave_desktop_service_AudioPlayer_isPlaying
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_libwave_desktop_service_AudioPlayer
+ * Method:    isPaused
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_libwave_desktop_service_AudioPlayer_isPaused
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif

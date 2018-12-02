@@ -33,15 +33,15 @@ void effectCallback(int chan, void *stream, int len, void *udata) {
 
 	// g_env->CallStaticVoidMethod(callback_class, callback_method);
 
-	jintArray buffer = g_env->NewIntArray(len/2);
+	jintArray buffer = g_env->NewIntArray(len / 2);
 
-	int* newBuffer = new int[len/2];
+	int* newBuffer = new int[len / 2];
 
-	for (int i=0; i<len/2;i+=2) {
-		newBuffer[i] = ( ((int *)stream)[i] + ((int *)stream)[i+1])/2;
+	for (int i = 0; i < len / 2; i += 2) {
+		newBuffer[i] = (((int *) stream)[i] + ((int *) stream)[i + 1]) / 2;
 	}
 
-	g_env->SetIntArrayRegion(buffer, 0, len/2, (jint*)newBuffer);
+	g_env->SetIntArrayRegion(buffer, 0, len / 2, (jint*) newBuffer);
 
 	g_env->CallIntMethod(callback_class, callback_method, buffer);
 
@@ -85,6 +85,7 @@ JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_init(JNIEnv 
 	auto flags = MIX_INIT_OGG | MIX_INIT_MOD | MIX_INIT_FLAC | MIX_INIT_MP3;
 
 	auto initted = Mix_Init(flags);
+
 	if (initted & flags != flags) {
 		std::cerr << "Mix_Init: Failed to init required ogg, mod, flac, mp3 support!\n";
 		std::cerr << "Mix_Init: " << Mix_GetError() << std::endl;
@@ -114,12 +115,18 @@ JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_shutdown(JNI
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_resume(JNIEnv *, jobject) {
 
-	Mix_ResumeMusic();
+	if (Mix_PausedMusic()) {
+		Mix_ResumeMusic();
+	}
+
 }
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_stop(JNIEnv *, jobject) {
 
-	Mix_HaltMusic();
+	if (Mix_PlayingMusic()) {
+		Mix_HaltMusic();
+	}
+
 }
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_stopFadeOut(JNIEnv *, jobject, jint ms) {
@@ -132,7 +139,9 @@ JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_stopFadeOut(
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_pause(JNIEnv *, jobject) {
 
-	Mix_PauseMusic();
+	if (Mix_PlayingMusic()) {
+		Mix_PauseMusic();
+	}
 
 }
 
@@ -156,6 +165,10 @@ JNIEXPORT jlong JNICALL Java_com_libwave_desktop_service_AudioPlayer_loadMusic(J
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_playMusic(JNIEnv *env, jobject, jlong id) {
 
+	if (Mix_PlayingMusic()) {
+		Mix_HaltMusic();
+	}
+
 	if (Mix_PlayMusic((Mix_Music*) id, 0) == -1) {
 		std::cerr << "Mix_PlayMusic: " << Mix_GetError() << std::endl;
 	}
@@ -163,9 +176,34 @@ JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_playMusic(JN
 }
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_playMusicFadeIn(JNIEnv *, jobject, jlong music, jint ms) {
+
+	if (Mix_PlayingMusic()) {
+		Mix_HaltMusic();
+	}
+
 	Mix_FadeInMusic((Mix_Music*) music, -1, ms);
+
 }
 
 JNIEXPORT void JNICALL Java_com_libwave_desktop_service_AudioPlayer_closeMusic(JNIEnv *, jobject, jlong music) {
+
+	if (Mix_PlayingMusic()) {
+		Mix_HaltMusic();
+	}
+
 	Mix_FreeMusic((Mix_Music*) music);
+
 }
+
+JNIEXPORT jboolean JNICALL Java_com_libwave_desktop_service_AudioPlayer_isPlaying(JNIEnv *, jobject) {
+
+	return Mix_PlayingMusic() ? true : false;
+
+}
+
+JNIEXPORT jboolean JNICALL Java_com_libwave_desktop_service_AudioPlayer_isPaused(JNIEnv *, jobject) {
+
+	return Mix_PausedMusic() ? true : false;
+
+}
+
