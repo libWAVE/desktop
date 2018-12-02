@@ -16,17 +16,17 @@ import javax.swing.table.DefaultTableModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.libwave.desktop.domain.Track;
-import com.libwave.desktop.service.AudioPlayer;
+import com.libwave.desktop.service.MusicPlayer;
 import com.libwave.desktop.service.TrackService;
 
+@SuppressWarnings("serial")
 @Component
-public class TrackListPanel extends JPanel implements InitializingBean, DisposableBean {
+public class TrackListPanel extends JPanel implements InitializingBean {
 
 	private static final String PLAY_MUSIC = "PLAY_MUSIC";
 
@@ -39,14 +39,11 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 	@Autowired
 	private TrackService trackService;
 
-	private AudioPlayer ap = new AudioPlayer();
-
-	private long currentlyPlayedMusicPointer;
+	@Autowired
+	private MusicPlayer musicPlayer;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-
-		ap.init();
 
 		tableModel = new DefaultTableModel(new String[] { "Filename" }, 0) {
 
@@ -89,26 +86,6 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 		new PlayTrackAction().actionPerformed(null);
 	}
 
-	private void play(Track t) {
-
-		if (t != null) {
-
-			log.debug("Play: " + t);
-
-			if (currentlyPlayedMusicPointer > 0) {
-				ap.stopFadeOut(400);
-				ap.closeMusic(currentlyPlayedMusicPointer);
-				currentlyPlayedMusicPointer = 0;
-			}
-
-			currentlyPlayedMusicPointer = ap.loadMusic(t.getPath());
-
-			if (currentlyPlayedMusicPointer != 0) {
-				ap.playMusicFadeIn(currentlyPlayedMusicPointer, 1000);
-			}
-		}
-	}
-
 	public void addTrack(Track t) {
 		tableModel.addRow(new Track[] { t });
 	}
@@ -129,11 +106,6 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 
 	}
 
-	@Override
-	public void destroy() throws Exception {
-		ap.shutdown();
-	}
-
 	public Track getSelectedTrack() {
 		Track track = null;
 		if (table.getSelectedRow() >= 0) {
@@ -142,11 +114,11 @@ public class TrackListPanel extends JPanel implements InitializingBean, Disposab
 		return track;
 	}
 
-	private class PlayTrackAction extends 	AbstractAction {
+	private class PlayTrackAction extends AbstractAction {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			play(getSelectedTrack());
+			musicPlayer.play(getSelectedTrack());
 		}
 	}
 

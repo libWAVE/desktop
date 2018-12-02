@@ -58,6 +58,17 @@ public class TrackService {
 	public void add(File fileOrFolder) {
 		fileToIndexDao.save(new FileToIndex(fileOrFolder.getAbsolutePath()));
 	}
+	
+	@Transactional
+	@Scheduled(fixedDelay = 1000)
+	public void checkTrackFiles() {
+		
+		long count = this.trackDao.count();
+		
+		// TODO remove missing files from DB
+		
+		
+	}
 
 	@Transactional
 	@Scheduled(fixedDelay = 2000)

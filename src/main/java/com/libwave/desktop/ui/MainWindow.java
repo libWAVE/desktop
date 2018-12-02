@@ -9,7 +9,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -21,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.libwave.desktop.DesktopClient;
@@ -141,42 +139,28 @@ public class MainWindow implements InitializingBean, ActionListener {
 		}
 
 		/*
-		{
-
-			JMenu menu = new JMenu("Player");
-			mb.add(menu);
-
-			{
-				JMenuItem item = new JMenuItem("Play", Icons.getIcon("play_24.png"));
-				item.setMnemonic('P');
-
-				item.setActionCommand("PLAY");
-				item.addActionListener(this);
-				menu.add(item);
-			}
-			menu.addSeparator();
-			{
-				JMenuItem item = new JMenuItem("Pause", Icons.getIcon("pause_24.png"));
-				item.setMnemonic('A');
-				item.setActionCommand("PAUSE");
-				item.addActionListener(this);
-				menu.add(item);
-			}
-			
-			  { JMenuItem item = new JMenuItem("Resume"); item.setMnemonic('R');
-			  item.setActionCommand("RESUME"); item.addActionListener(this);
-			  menu.add(item); }
-			 
-			menu.addSeparator();
-			{
-				JMenuItem item = new JMenuItem("Stop", Icons.getIcon("stop_24.png"));
-				item.setMnemonic('S');
-				item.setActionCommand("STOP");
-				item.addActionListener(this);
-				menu.add(item);
-			}
-		}
-*/
+		 * {
+		 * 
+		 * JMenu menu = new JMenu("Player"); mb.add(menu);
+		 * 
+		 * { JMenuItem item = new JMenuItem("Play", Icons.getIcon("play_24.png"));
+		 * item.setMnemonic('P');
+		 * 
+		 * item.setActionCommand("PLAY"); item.addActionListener(this); menu.add(item);
+		 * } menu.addSeparator(); { JMenuItem item = new JMenuItem("Pause",
+		 * Icons.getIcon("pause_24.png")); item.setMnemonic('A');
+		 * item.setActionCommand("PAUSE"); item.addActionListener(this); menu.add(item);
+		 * }
+		 * 
+		 * { JMenuItem item = new JMenuItem("Resume"); item.setMnemonic('R');
+		 * item.setActionCommand("RESUME"); item.addActionListener(this);
+		 * menu.add(item); }
+		 * 
+		 * menu.addSeparator(); { JMenuItem item = new JMenuItem("Stop",
+		 * Icons.getIcon("stop_24.png")); item.setMnemonic('S');
+		 * item.setActionCommand("STOP"); item.addActionListener(this); menu.add(item);
+		 * } }
+		 */
 		frame.setJMenuBar(mb);
 
 	}
@@ -200,9 +184,7 @@ public class MainWindow implements InitializingBean, ActionListener {
 
 	public static void setIcon(BufferedImage bim) {
 		if (frame != null && bim != null) {
-			SwingUtilities.invokeLater(() -> {
-				frame.setIconImage(bim);
-			});
+			frame.setIconImage(bim);
 		}
 	}
 

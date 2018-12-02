@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.libwave.desktop.common.Icons;
 
+@SuppressWarnings("serial")
 @Component
 public class StatusBar extends JPanel implements InitializingBean {
 
@@ -30,9 +31,9 @@ public class StatusBar extends JPanel implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		status.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		status.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		status.setIcon(Icons.getIcon("tick.png"));
-		
+
 		this.setLayout(new BorderLayout());
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		status.setText("Welcome to libWAVE!");
@@ -43,6 +44,10 @@ public class StatusBar extends JPanel implements InitializingBean {
 
 	public void setIcon(BufferedImage bim) {
 		status.setIcon(new ImageIcon(bim));
+	}
+
+	public void resetStatus() {
+		status.setText("Ready");
 	}
 
 }

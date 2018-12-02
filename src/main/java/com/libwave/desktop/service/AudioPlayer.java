@@ -2,7 +2,6 @@ package com.libwave.desktop.service;
 
 import java.util.Arrays;
 import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.swing.JOptionPane;
 
@@ -26,6 +25,7 @@ public class AudioPlayer {
 		}
 
 		new Thread(() -> {
+			Thread.currentThread().setName("Icon Waves Update Thread");
 			while (true) {
 				Integer[] poll = queue.poll();
 				if (poll != null) {
@@ -40,15 +40,10 @@ public class AudioPlayer {
 		}).start();
 	}
 
-	public static void audioDataCallback() {
-		log.debug("audioDataCallback");
-	}
-
+	// TODO optimize
 	public static void audioDataCallback(int[] data) {
-		// log.debug("audioDataCallback: " + data.length);
-		// log.debug(Arrays.toString(data));
-		Integer[] what = Arrays.stream(data).boxed().toArray(Integer[]::new);
-		queue.add(what);
+		Integer[] boxed = Arrays.stream(data).boxed().toArray(Integer[]::new);
+		queue.add(boxed);
 	}
 
 	public native void init();
@@ -70,6 +65,11 @@ public class AudioPlayer {
 	public native void playMusic(long song);
 
 	public native void playMusicFadeIn(long song, int ms);
+	
+	public native boolean isPlaying();
+	
+	public native boolean isPaused();
+	
 	/*
 	 * public static void main(String[] args) throws InterruptedException {
 	 * 

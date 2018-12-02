@@ -6,8 +6,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.apache.commons.lang3.SystemUtils;
-import org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceAutumnLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceCeruleanLookAndFeel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -22,12 +23,14 @@ public class DesktopClient {
 
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
 
-		if (SystemUtils.IS_OS_WINDOWS == false) {
+		//if (SystemUtils.IS_OS_WINDOWS == false) {
 			JDialog.setDefaultLookAndFeelDecorated(true);
 			JFrame.setDefaultLookAndFeelDecorated(true);
-		}
+		//}
 
-		UIManager.setLookAndFeel(new SubstanceBusinessBlackSteelLookAndFeel());
+		// UIManager.setLookAndFeel(new SubstanceBusinessBlackSteelLookAndFeel());
+			
+			UIManager.setLookAndFeel(new SubstanceCeruleanLookAndFeel());
 
 		SwingUtilities.invokeLater(() -> {
 			setUIFont(new javax.swing.plaf.FontUIResource(Fonts.getMainFont()));

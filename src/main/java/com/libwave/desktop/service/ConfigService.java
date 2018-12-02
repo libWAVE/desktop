@@ -49,6 +49,8 @@ public class ConfigService implements InitializingBean {
 			c.setFileChooserLocation(SystemUtils.getUserHome().getAbsolutePath());
 			configDao.save(c);
 		}
+		
+		log.debug("Desktop UUID: " + getConfig().get().getUuid());
 	}
 
 }
